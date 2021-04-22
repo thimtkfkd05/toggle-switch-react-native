@@ -170,6 +170,7 @@ export default class ToggleSwitch extends React.Component {
       <View style={styles.container} {...this.props}>
         <AnimatedTouchableOpacity
           style={this.createToggleSwitchStyle()}
+          opacity={this.opacity}
           activeOpacity={0.8}
           onPress={() => (disabled ? null : onToggle(!isOn))}
         >
