@@ -183,7 +183,7 @@ export default class ToggleSwitch extends React.Component {
             <Text style={[
               { width: this.width },
               styles.textStyle,
-              textStyle
+              textStyle,
               isOn ? [styles.textOn, textOnStyle] : [styles.textOff, textOffStyle],
             ]}>{isOn ? (onText || "") : (offText || "")}</Text>
           ) : null}
