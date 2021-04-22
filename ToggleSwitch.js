@@ -10,7 +10,6 @@
 import React from "react";
 import {
   StyleSheet,
-  Text,
   View,
   TouchableOpacity,
   Animated,
@@ -52,15 +51,19 @@ export default class ToggleSwitch extends React.Component {
 
   static propTypes = {
     isOn: PropTypes.bool.isRequired,
-    label: PropTypes.string,
     onColor: PropTypes.string,
     offColor: PropTypes.string,
+    onText: PropTypes.string,
+    offText: PropTypes.string,
     size: PropTypes.string,
-    labelStyle: PropTypes.oneOfType([PropTypes.object, PropTypes.number]),
     thumbOnStyle: PropTypes.oneOfType([PropTypes.object, PropTypes.number]),
     thumbOffStyle: PropTypes.oneOfType([PropTypes.object, PropTypes.number]),
     trackOnStyle: PropTypes.oneOfType([PropTypes.object, PropTypes.number]),
     trackOffStyle: PropTypes.oneOfType([PropTypes.object, PropTypes.number]),
+    textStyle: PropTypes.oneOfType([PropTypes.object, PropTypes.number]),
+    textOnStyle: PropTypes.oneOfType([PropTypes.object, PropTypes.number]),
+    textOffStyle: PropTypes.oneOfType([PropTypes.object, PropTypes.number]),
+    offOpacity: PropTypes.number,
     onToggle: PropTypes.func,
     icon: PropTypes.object,
     disabled: PropTypes.bool,
@@ -74,11 +77,14 @@ export default class ToggleSwitch extends React.Component {
     onColor: "#4cd137",
     offColor: "#ecf0f1",
     size: "medium",
-    labelStyle: {},
     thumbOnStyle: {},
     thumbOffStyle: {},
     trackOnStyle: {},
     trackOffStyle: {},
+    textStyle: {},
+    textOnStyle: {},
+    textOffStyle: {},
+    offOpacity: 0.5,
     icon: null,
     disabled: false,
     animationSpeed: 300,
@@ -87,12 +93,14 @@ export default class ToggleSwitch extends React.Component {
   };
 
   offsetX = new Animated.Value(0);
+  opacity = new Animated.Value(this.props.offOpacity);
   dimensions = ToggleSwitch.calculateDimensions(this.props.size);
+  width = this.dimensions.width  + (this.props.onText || this.props.offText ? 8 : 0);
 
   createToggleSwitchStyle = () => [
     {
       justifyContent: "center",
-      width: this.dimensions.width,
+      width: this.width,
       borderRadius: 20,
       padding: this.dimensions.padding,
       backgroundColor: this.props.isOn
@@ -114,13 +122,6 @@ export default class ToggleSwitch extends React.Component {
       width: this.dimensions.circleWidth,
       height: this.dimensions.circleHeight,
       borderRadius: this.dimensions.circleWidth / 2,
-      shadowColor: "#000",
-      shadowOffset: {
-        width: 0,
-        height: 2,
-      },
-      shadowOpacity: 0.2,
-      shadowRadius: 2.5,
       elevation: 1.5,
     },
     this.props.isOn ? this.props.thumbOnStyle : this.props.thumbOffStyle,
@@ -133,32 +134,44 @@ export default class ToggleSwitch extends React.Component {
       isOn,
       onToggle,
       disabled,
-      labelStyle,
-      label,
+      onText,
+      offText,
+      textStyle,
+      textOnStyle,
+      textOffStyle,
+      offOpacity,
       icon,
     } = this.props;
+    const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
 
     let toValue;
     if (!I18nManager.isRTL && isOn) {
-      toValue = this.dimensions.width - this.dimensions.translateX;
+      toValue = this.width - this.dimensions.translateX;
     } else if (I18nManager.isRTL && isOn) {
-      toValue = -this.dimensions.width + this.dimensions.translateX;
+      toValue = -this.width + this.dimensions.translateX;
     } else {
       toValue = -1;
     }
 
-    Animated.timing(this.offsetX, {
-      toValue,
-      duration: animationSpeed,
-      useNativeDriver: useNativeDriver,
-    }).start();
+    Animated.parallel([
+      Animated.timing(this.offsetX, {
+        toValue,
+        duration: animationSpeed,
+        useNativeDriver: useNativeDriver,
+      }),
+      Animated.timing(this.opacity, {
+        toValue: isOn ? 1 : offOpacity,
+        duration: animationSpeed,
+        useNativeDriver: useNativeDriver,
+      }),
+    ]).start();
 
     return (
       <View style={styles.container} {...this.props}>
         {label ? (
           <Text style={[styles.labelStyle, labelStyle]}>{label}</Text>
         ) : null}
-        <TouchableOpacity
+        <AnimatedTouchableOpacity
           style={this.createToggleSwitchStyle()}
           activeOpacity={0.8}
           onPress={() => (disabled ? null : onToggle(!isOn))}
@@ -166,7 +179,15 @@ export default class ToggleSwitch extends React.Component {
           <Animated.View style={this.createInsideCircleStyle()}>
             {icon}
           </Animated.View>
-        </TouchableOpacity>
+          {onText || offText ? (
+            <Text style={[
+              { width: this.width },
+              styles.textStyle,
+              textStyle
+              isOn ? [styles.textOn, textOnStyle] : [styles.textOff, textOffStyle],
+            ]}>{isOn ? (onText || "") : (offText || "")}</Text>
+          ) : null}
+        </AnimatedTouchableOpacity>
       </View>
     );
   }
@@ -177,7 +198,16 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
-  labelStyle: {
-    marginHorizontal: 10,
+  textStyle: {
+    position: "absolute",
+    height: 12,
+    fontSize: 12,
+    lineHeight: 12,
+  },
+  textOn: {
+    left: 10,
+  },
+  textOff: {
+    right: -26,
   },
 });
