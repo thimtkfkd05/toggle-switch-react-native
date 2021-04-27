@@ -173,6 +173,7 @@ export default class ToggleSwitch extends React.Component {
           style={this.createToggleSwitchStyle()}
           opacity={this.opacity}
           activeOpacity={0.8}
+          disabled={disabled}
           onPress={() => (disabled ? null : onToggle(!isOn))}
         >
           <Animated.View style={this.createInsideCircleStyle()}>
