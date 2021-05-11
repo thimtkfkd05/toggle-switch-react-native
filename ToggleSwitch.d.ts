@@ -2,15 +2,19 @@ import React from 'react';
 
 export type ToggleSwitchProps = {
   isOn: boolean;
-  label?: string;
   onColor?: string;
   offColor?: string;
+  onText?: string;
+  offText?: string;
   size?: string;
-  labelStyle?: object | number;
   thumbOnStyle?: object | number;
   thumbOffStyle?: object | number;
   trackOnStyle?: object | number;
   trackOffStyle?: object | number;
+  textStyle?: object | number;
+  textOnStyle?: object | number;
+  textOffStyle?: object | number;
+  offOpacity?: number;
   onToggle?: (isOn: boolean) => any;
   icon?: object;
   disabled?: boolean;
@@ -19,6 +23,6 @@ export type ToggleSwitchProps = {
   circleColor?: string;
 }
 
-type ToggleSwitch = React.ComponentType<ToggleSwitchProps>;
+declare const ToggleSwitch = React.ComponentType<ToggleSwitchProps>;
 
 export default ToggleSwitch;
