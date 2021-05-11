@@ -23,6 +23,6 @@ export type ToggleSwitchProps = {
   circleColor?: string;
 }
 
-declare const ToggleSwitch = React.ComponentType<ToggleSwitchProps>;
+declare const ToggleSwitch: React.ComponentType<ToggleSwitchProps>;
 
 export default ToggleSwitch;
