@@ -123,7 +123,7 @@ export default class ToggleSwitch extends React.Component {
       width: this.dimensions.circleWidth,
       height: this.dimensions.circleHeight,
       borderRadius: this.dimensions.circleWidth / 2,
-      elevation: 1.5,
+      elevation: this.dimensions.circleWidth,
     },
     this.props.isOn ? this.props.thumbOnStyle : this.props.thumbOffStyle,
   ];
